@@ -1,5 +1,5 @@
 <template>
-    <v-bottom-navigation grow>
+    <v-bottom-navigation grow v-model="value">
         <v-btn value="home" @click="changeRoute('')">
             <v-icon>mdi-home</v-icon>
             <span>Accueil</span>
@@ -24,6 +24,9 @@
 
 <script setup lang="ts">
     const router = useRouter();
+    const route = useRoute();
+
+    let value = route.name.replace("/","");
 
     function changeRoute(to: string) {
         if(to == "") {
