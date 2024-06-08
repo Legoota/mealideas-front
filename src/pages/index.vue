@@ -1,5 +1,6 @@
 <template>
-  <HelloWorld />
+  <HomeComponent />
+  <AppFooter />
 </template>
 
 <script lang="ts" setup>

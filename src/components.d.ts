@@ -10,8 +10,9 @@ declare module 'vue' {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     CalendarComponent: typeof import('./components/CalendarComponent.vue')['default']
     EditorComponent: typeof import('./components/EditorComponent.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    HomeComponent: typeof import('./components/HomeComponent.vue')['default']
     MealsComponent: typeof import('./components/MealsComponent.vue')['default']
+    NavigationComponent: typeof import('./components/NavigationComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
