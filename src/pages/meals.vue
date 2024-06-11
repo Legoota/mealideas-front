@@ -1,6 +1,5 @@
 <template>
   <div>
-    <span>meals</span>
     <MealsComponent />
     <NavigationComponent />
   </div>

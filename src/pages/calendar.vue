@@ -1,6 +1,5 @@
 <template>
   <div>
-    <span>calendar</span>
     <CalendarComponent />
     <NavigationComponent />
   </div>
