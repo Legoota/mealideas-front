@@ -4,15 +4,15 @@
       <v-data-table :items="meals" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]">
 
         <template v-slot:item.date_add="{ value }">
-          {{ useDate().format(value, "keyboardDateTime24h") }}
+          {{ value ? useDate().format(value, "keyboardDateTime24h") : "-" }}
         </template>
 
         <template v-slot:item.date_lastuse="{ value }">
-          {{ useDate().format(value, "keyboardDateTime24h") }}
+          {{ value ? useDate().format(value, "keyboardDateTime24h") : "-" }}
         </template>
 
         <template v-slot:item.type="{ value }">
-          <v-icon>mdi-{{ value == 1 ? "food-turkey" : "cupcake" }}</v-icon>
+          <v-icon>{{ mdiFoodIcon(value) }}</v-icon>
         </template>
 
         <template v-slot:top>
@@ -47,10 +47,7 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="4" sm="6">
-                        <v-text-field
-                          v-model="editedItem.type"
-                          label="Type"
-                        ></v-text-field>
+                        <v-select v-model="editedItem.type" :items="types" item-title="name" item-value="id" label="Type"></v-select>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -69,20 +66,16 @@
             </v-dialog>
             <v-dialog v-model="dialogDelete" max-width="500px">
               <v-card>
-                <v-card-title class="text-h5"
-                  >Êtes-vous sûr(e) de vouloir supprimer ?</v-card-title
-                >
+                <v-card-title class="text-h5">Êtes-vous sûr(e) de vouloir supprimer ?</v-card-title>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-                    >Annuler</v-btn
-                  >
+                  <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Annuler</v-btn>
                   <v-btn
                     color="blue-darken-1"
                     variant="text"
-                    @click="deleteItemConfirm"
-                    >Oui</v-btn
-                  >
+                    @click="deleteItemConfirm">
+                    Oui
+                  </v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
@@ -102,12 +95,14 @@
 
 <script setup lang="ts">
   import { Ref, onMounted } from "vue";
-  import { Meal } from "../models/meal";
+  import { Meal } from "@/models/meal";
+  import { Type } from "@/models/type";
   import { useDate } from 'vuetify';
   import { ref, nextTick, watch, computed } from "vue";
   import axios from "axios";
 
   const meals : Ref<Meal[]> = ref([]);
+  const types : Ref<Type[]> = ref([]);
  
   const headers = [
     { title: 'Nom', value: 'name', sortable: true },
@@ -127,7 +122,7 @@
     date_add: new Date(),
     date_lastuse: new Date(),
     counter: 0,
-    type: 0
+    type: 1
   });
   let defaultItem: Ref<Meal> = ref({
     id: 0,
@@ -135,10 +130,16 @@
     date_add: new Date(),
     date_lastuse: new Date(),
     counter: 0,
-    type: 0
+    type: 1
   });
 
   onMounted(async () => {
+    await axios
+      .get('http://localhost:8080/api/types')
+      .then(response => {
+        types.value = response.data
+      })
+      .catch(err => console.error(err));
     await axios
       .get('http://localhost:8080/api/meals')
       .then(response => {
@@ -159,9 +160,28 @@
         return editedIndex.value === -1 ? 'Nouveau plat' : 'Modifier plat';
   });
 
+  function mdiFoodIcon(type: number) {
+    let mdi = "";
+    switch(type) {
+      case 1:
+        mdi = "mdi-food-turkey";
+        break;
+      case 2:
+        mdi = "mdi-cupcake";
+        break;
+      case 3:
+        mdi = "mdi-peanut";
+        break;
+      default:
+        mdi = "mdi-help-box";
+        break;
+    }
+    return mdi;
+  }
+
   function deleteItem(item: any) {
     editedIndex.value = meals.value.indexOf(item);
-    editedItem = Object.assign({}, item);
+    editedItem.value = Object.assign({}, item);
     dialogDelete.value = true;
   };
 
@@ -173,14 +193,14 @@
   function closeDelete() {
     dialogDelete.value = false;
     nextTick(() => {
-      editedItem = Object.assign({}, defaultItem);
+      editedItem.value = Object.assign({}, defaultItem.value);
       editedIndex.value = -1;
     });
   };
 
   function editItem(item: any) {
-    editedIndex.value = meals.value.indexOf(item);
-    editedItem = Object.assign({}, item);
+    editedIndex.value = meals.value.indexOf(item.value);
+    editedItem.value = Object.assign({}, item);
     dialog.value = true;
   };
 
@@ -196,7 +216,7 @@
   function close() {
     dialog.value = false;
     nextTick(() => {
-      editedItem = Object.assign({}, defaultItem);
+      editedItem.value = Object.assign({}, defaultItem.value);
       editedIndex.value = -1;
     });
   };
