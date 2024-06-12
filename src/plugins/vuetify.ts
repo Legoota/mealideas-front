@@ -16,4 +16,9 @@ export default createVuetify({
   theme: {
     defaultTheme: 'dark',
   },
+  date: {
+    locale: {
+      en: 'fr-FR',
+    },
+  },
 })
