@@ -1,6 +1,13 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="align-centerfill-height mx-auto" max-width="900">
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="2500"
+        elevation="24"
+        :color="snackbarColor">
+        {{ snackbarText }}
+      </v-snackbar>
       <v-data-table :items="meals" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]">
 
         <template v-slot:item.date_add="{ value }">
@@ -41,12 +48,12 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="4" sm="6">
-                        <v-text-field v-if="editedIndex > -1"
-                          v-model="editedItem.counter"
+                        <v-number-input
+                          v-if="editedIndex > -1"
                           label="Nombre d'utilisations"
-                          type="number"
                           :min="0"
-                        ></v-text-field>
+                          v-model="editedItem.counter"
+                        ></v-number-input>
                       </v-col>
                       <v-col cols="12" md="4" sm="6">
                         <v-select v-model="editedItem.type" :items="types" item-title="name" item-value="id" label="Type"></v-select>
@@ -115,6 +122,9 @@
     { title: 'Actions', key: 'actions', sortable: false },
   ];
 
+  let snackbar: Ref<boolean> = ref(false);
+  let snackbarText: Ref<string> = ref("");
+  let snackbarColor: Ref<string> = ref("green");
   let dialog: Ref<boolean> = ref(false);
   let dialogDelete: Ref<boolean> = ref(false);
   let editedIndex: Ref<number> = ref(-1);
@@ -141,13 +151,20 @@
       .then(response => {
         types.value = response.data
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+          console.error(err);
+        });
     await axios
       .get('http://localhost:8080/api/meals')
       .then(response => {
         meals.value = response.data
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+          console.error(err);
+          snackbarColor.value = "red";
+          snackbarText.value = "Erreur lors de la récupération des repas !";
+          snackbar.value = true;
+        });
   });
 
   watch(dialog, (newVal) => {
@@ -187,8 +204,21 @@
     dialogDelete.value = true;
   };
 
-  function deleteItemConfirm() {
+  async function deleteItemConfirm() {
     meals.value.splice(editedIndex.value, 1);
+    console.log("axios delete", editedItem.value);
+    await axios.delete("http://localhost:8080/api/meals/" + editedItem.value.id)
+      .then(() => {
+        snackbarColor.value = "green";
+        snackbarText.value = "Repas supprimé !";
+        snackbar.value = true;
+      })
+      .catch(err => {
+        console.error(err);
+        snackbarColor.value = "red";
+        snackbarText.value = "Erreur lors de la suppression du repas !";
+        snackbar.value = true;
+      })
     closeDelete();
   };
 
@@ -206,11 +236,35 @@
     dialog.value = true;
   };
 
-  function save() {
+  async function save() {
     if (editedIndex.value > -1) {
       Object.assign(meals.value[editedIndex.value], editedItem.value);
+      await axios.put("http://localhost:8080/api/meals/" + editedItem.value.id, editedItem.value)
+        .then(() => {
+          snackbarColor.value = "green";
+          snackbarText.value = "Repas modifié !";
+          snackbar.value = true;
+        })
+        .catch(err => {
+          console.error(err);
+          snackbarColor.value = "red";
+          snackbarText.value = "Erreur lors de la modification du repas !";
+          snackbar.value = true;
+        });
     } else {
       meals.value.push(editedItem.value);
+      await axios.post("http://localhost:8080/api/meals", editedItem.value)
+        .then(() => {
+          snackbarColor.value = "green";
+          snackbarText.value = "Repas ajouté !";
+          snackbar.value = true;
+        })
+        .catch(err => {
+          console.error(err);
+          snackbarColor.value = "red";
+          snackbarText.value = "Erreur lors de l'ajout du repas !";
+          snackbar.value = true;
+        });
     }
     close();
   };
