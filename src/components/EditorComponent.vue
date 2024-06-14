@@ -41,9 +41,11 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="4" sm="6">
-                        <v-text-field
+                        <v-text-field v-if="editedIndex > -1"
                           v-model="editedItem.counter"
                           label="Nombre d'utilisations"
+                          type="number"
+                          :min="0"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="4" sm="6">
@@ -199,14 +201,14 @@
   };
 
   function editItem(item: any) {
-    editedIndex.value = meals.value.indexOf(item.value);
+    editedIndex.value = meals.value.indexOf(item);
     editedItem.value = Object.assign({}, item);
     dialog.value = true;
   };
 
   function save() {
     if (editedIndex.value > -1) {
-      Object.assign(meals.value[editedIndex.value], editedItem);
+      Object.assign(meals.value[editedIndex.value], editedItem.value);
     } else {
       meals.value.push(editedItem.value);
     }
