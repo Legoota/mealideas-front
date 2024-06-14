@@ -12,20 +12,10 @@
                     <v-card
                         class="mx-auto"
                         max-width="344"
-                        hover>
-                        <v-card-item>
-                        <v-card-title>
-                            Idées repas
-                        </v-card-title>
-
-                        <v-card-subtitle>
-                            Suggestions de repas
-                        </v-card-subtitle>
-                        </v-card-item>
-
-                        <v-card-text>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </v-card-text>
+                        hover
+                        prepend-icon="mdi-food-turkey"
+                        title="Idées repas"
+                        subtitle="Suggestions de repas">
                     </v-card>
                 </router-link>
             </v-col>
@@ -35,20 +25,10 @@
                     <v-card
                         class="mx-auto"
                         max-width="344"
-                        hover>
-                        <v-card-item>
-                        <v-card-title>
-                            Calendrier
-                        </v-card-title>
-
-                        <v-card-subtitle>
-                            Calendrier des repas
-                        </v-card-subtitle>
-                        </v-card-item>
-
-                        <v-card-text>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </v-card-text>
+                        hover
+                        prepend-icon="mdi-calendar"
+                        title="Calendrier"
+                        subtitle="Calendrier des repas">
                     </v-card>
                 </router-link>
             </v-col>
@@ -58,20 +38,10 @@
                     <v-card
                         class="mx-auto"
                         max-width="344"
-                        hover>
-                        <v-card-item>
-                        <v-card-title>
-                            Éditeur
-                        </v-card-title>
-
-                        <v-card-subtitle>
-                            Modification/ajout
-                        </v-card-subtitle>
-                        </v-card-item>
-
-                        <v-card-text>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </v-card-text>
+                        hover
+                        prepend-icon="mdi-pencil"
+                        title="Éditeur"
+                        subtitle="Modification/ajout">
                     </v-card>
                 </router-link>
             </v-col>
