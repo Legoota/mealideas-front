@@ -1,6 +1,6 @@
 <template>
   <v-container class="fill-height">
-    <v-responsive class="align-centerfill-height mx-auto" max-width="900">
+    <v-responsive class="align-centerfill-height mx-auto" max-width="1000">
       <v-snackbar
         v-model="snackbar"
         :timeout="2500"
@@ -8,14 +8,26 @@
         :color="snackbarColor">
         {{ snackbarText }}
       </v-snackbar>
-      <v-data-table :items="meals" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]">
+
+      <v-text-field
+        v-model="search"
+        label="Rechercher"
+        prepend-inner-icon="mdi-magnify"
+        variant="solo-filled"
+        hide-details
+        clearable>
+      </v-text-field>
+
+      <br />
+
+      <v-data-table :items="meals" :headers="headers" :search="search" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]">
 
         <template v-slot:item.date_add="{ value }">
-          {{ value ? useDate().format(value, "keyboardDateTime24h") : "-" }}
+          {{ value ? useDate().format(value, "keyboardDate") : "-" }}
         </template>
 
         <template v-slot:item.date_lastuse="{ value }">
-          {{ value ? useDate().format(value, "keyboardDateTime24h") : "-" }}
+          {{ value ? useDate().format(value, "keyboardDate") : "-" }}
         </template>
 
         <template v-slot:item.type="{ value }">
@@ -40,36 +52,33 @@
 
                 <v-card-text>
                   <v-container>
-                    <v-row>
-                      <v-col cols="12" md="4" sm="6">
-                        <v-text-field
-                          v-model="editedItem.name"
-                          label="Dessert name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="4" sm="6">
-                        <v-number-input
-                          v-if="editedIndex > -1"
-                          label="Nombre d'utilisations"
-                          :min="0"
-                          v-model="editedItem.counter"
-                        ></v-number-input>
-                      </v-col>
-                      <v-col cols="12" md="4" sm="6">
-                        <v-select v-model="editedItem.type" :items="types" item-title="name" item-value="id" label="Type"></v-select>
-                      </v-col>
-                    </v-row>
+                    <v-text-field
+                      v-model="editedItem.name"
+                      label="Nom"
+                      variant="solo-filled">
+                    </v-text-field>
+
+                    <v-number-input
+                      v-if="editedIndex > -1"
+                      label="Nombre d'utilisations"
+                      :min="0"
+                      v-model="editedItem.counter">
+                    </v-number-input>
+
+                    <v-select 
+                      v-model="editedItem.type"
+                      :items="types"
+                      item-title="name"
+                      item-value="id"
+                      label="Type">
+                    </v-select>
                   </v-container>
                 </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue-darken-1" variant="text" @click="close">
-                    Annuler
-                  </v-btn>
-                  <v-btn color="blue-darken-1" variant="text" @click="save">
-                    Sauvegarder
-                  </v-btn>
+                  <v-btn color="blue-darken-1" variant="text" @click="close">Annuler</v-btn>
+                  <v-btn color="blue-darken-1" variant="text" @click="save">Sauvegarder</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -79,12 +88,7 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Annuler</v-btn>
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="deleteItemConfirm">
-                    Oui
-                  </v-btn>
+                  <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">Oui</v-btn>
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
@@ -92,10 +96,8 @@
           </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon class="me-2" size="small" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
+          <v-icon class="me-2" size="small" @click="editItem(item)">mdi-pencil</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </v-responsive>
@@ -117,7 +119,7 @@
     { title: 'Nom', value: 'name', sortable: true },
     { title: 'Date d\'ajout', value: 'date_add', sortable: true },
     { title: 'Utilisé le', value: 'date_lastuse', sortable: true },
-    { title: 'Nombre de fois', value: 'counter', sortable: true },
+    { title: 'Utilisations', value: 'counter', sortable: true },
     { title: 'Type', value: 'type', sortable: true },
     { title: 'Actions', key: 'actions', sortable: false },
   ];
@@ -125,6 +127,7 @@
   let snackbar: Ref<boolean> = ref(false);
   let snackbarText: Ref<string> = ref("");
   let snackbarColor: Ref<string> = ref("green");
+  let search: Ref<string> = ref("");
   let dialog: Ref<boolean> = ref(false);
   let dialogDelete: Ref<boolean> = ref(false);
   let editedIndex: Ref<number> = ref(-1);

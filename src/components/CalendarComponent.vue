@@ -1,6 +1,6 @@
 <template>
   <v-container class="fill-height">
-    <v-responsive class="align-centerfill-height mx-auto" max-width="900">
+    <v-responsive class="align-centerfill-height mx-auto" max-width="1000">
       <v-calendar
         v-model="value"
         view-mode="month"

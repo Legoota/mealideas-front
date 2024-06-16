@@ -2,7 +2,7 @@
   <v-container class="fill-height">
     <v-responsive
       class="align-centerfill-height mx-auto"
-      max-width="900"
+      max-width="1000"
     >
       <v-img
         class="mb-4"
