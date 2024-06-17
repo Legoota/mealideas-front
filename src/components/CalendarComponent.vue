@@ -11,6 +11,6 @@
 </template>
 
 <script setup lang="ts">
-  const value = new Date();
+  const value: Ref<Date[]> = ref([new Date()]);
 
 </script>
