@@ -8,7 +8,7 @@
 
         <v-row>
             <v-col cols="12" md="4">
-                <router-link to="/meals">
+                <router-link to="/meals" class="no-decoration">
                     <v-card
                         class="mx-auto home-card-justify"
                         max-width="344"
@@ -21,7 +21,7 @@
             </v-col>
 
             <v-col cols="12" md="4">
-                <router-link to="calendar">
+                <router-link to="calendar" class="no-decoration">
                     <v-card
                         class="mx-auto home-card-justify"
                         max-width="344"
@@ -34,7 +34,7 @@
             </v-col>
 
             <v-col cols="12" md="4">
-                <router-link to="/editor">
+                <router-link to="/editor" class="no-decoration">
                     <v-card
                         class="mx-auto home-card-justify"
                         max-width="344"
@@ -57,5 +57,9 @@
 <style>
     .home-card-justify .v-card-item {
         justify-content: center;
+    }
+
+    .no-decoration {
+        text-decoration: none;
     }
 </style>

@@ -209,7 +209,6 @@
 
   async function deleteItemConfirm() {
     meals.value.splice(editedIndex.value, 1);
-    console.log("axios delete", editedItem.value);
     await axios.delete("http://localhost:8080/api/meals/" + editedItem.value.id)
       .then(() => {
         snackbarColor.value = "green";
@@ -255,6 +254,7 @@
           snackbar.value = true;
         });
     } else {
+      editedItem.value.date_lastuse = null;
       meals.value.push(editedItem.value);
       await axios.post("http://localhost:8080/api/meals", editedItem.value)
         .then(() => {
