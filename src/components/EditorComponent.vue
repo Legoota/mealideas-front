@@ -58,6 +58,13 @@
                       variant="solo-filled">
                     </v-text-field>
 
+                    <v-date-input
+                      v-model="editedDate"
+                      label="Dernière utilisation"
+                      variant="solo-filled"
+                      prepend-icon="">
+                    </v-date-input>
+
                     <v-number-input
                       v-if="editedIndex > -1"
                       label="Nombre d'utilisations"
@@ -139,6 +146,7 @@
     counter: 0,
     type: 1
   });
+  let editedDate: Ref<Date | null> = ref(null);
   let defaultItem: Ref<Meal> = ref({
     id: 0,
     name: "",
@@ -235,11 +243,17 @@
   function editItem(item: any) {
     editedIndex.value = meals.value.indexOf(item);
     editedItem.value = Object.assign({}, item);
+    if(editedIndex.value > -1 && editedItem.value.date_lastuse) {
+      editedDate.value = new Date(editedItem.value.date_lastuse);
+    }
     dialog.value = true;
   };
 
   async function save() {
     if (editedIndex.value > -1) {
+      if(editedDate.value != null) {
+        editedItem.value.date_lastuse = new Date(editedDate.value);
+      }
       Object.assign(meals.value[editedIndex.value], editedItem.value);
       await axios.put("http://localhost:8080/api/meals/" + editedItem.value.id, editedItem.value)
         .then(() => {
@@ -277,6 +291,7 @@
     nextTick(() => {
       editedItem.value = Object.assign({}, defaultItem.value);
       editedIndex.value = -1;
+      editedDate.value = null;
     });
   };
 </script>
