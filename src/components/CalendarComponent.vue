@@ -38,7 +38,7 @@ import axios from "axios";
         start: new Date(m.date_lastuse || new Date()),
         end: new Date(m.date_lastuse || new Date()),
         allDay: true,
-        color: ["blue", "green", "red"][m.type]
+        color: ["green", "red", "blue"][m.type -1]
       }
     });
   });
