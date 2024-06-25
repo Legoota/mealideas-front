@@ -5,4 +5,5 @@ export interface Meal {
     date_lastuse: Date | null;
     counter: number;
     type: number;
+    notes: string;
 }

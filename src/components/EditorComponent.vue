@@ -144,7 +144,8 @@
     date_add: new Date(),
     date_lastuse: new Date(),
     counter: 0,
-    type: 1
+    type: 1,
+    notes: ""
   });
   let editedDate: Ref<Date | null> = ref(null);
   let defaultItem: Ref<Meal> = ref({
@@ -153,7 +154,8 @@
     date_add: new Date(),
     date_lastuse: new Date(),
     counter: 0,
-    type: 1
+    type: 1,
+    notes: ""
   });
 
   onMounted(async () => {
