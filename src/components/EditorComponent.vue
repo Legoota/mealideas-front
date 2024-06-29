@@ -278,16 +278,19 @@
   };
 
   async function save() {
-    if(!editedItem.value.name.length && editedItem.value.name.length > 200) {
+    console.log()
+    if(!editedItem.value.name.length || editedItem.value.name.length > 200) {
       snackbarColor.value = "orange";
       snackbarText.value = "Erreur : nom trop long !";
       snackbar.value = true;
+      close();
       return;
     }
     else if(editedItem.value.notes.length > 2000) {
       snackbarColor.value = "orange";
       snackbarText.value = "Erreur : notes trop longues !";
       snackbar.value = true;
+      close();
       return;
     }
     if (editedIndex.value > -1) {
