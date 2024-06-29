@@ -34,7 +34,7 @@
         Réinitialiser valeurs
       </v-btn>
 
-      <v-data-table :items="meals" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]" v-model="selectedMeals" show-select>
+      <v-data-table :items="etchebest" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]" v-model="selectedMeals" show-select>
 
         <template v-slot:item.date_add="{ value }">
           {{ value ? useDate().format(value, "keyboardDate") : "-" }}
@@ -53,6 +53,10 @@
           <v-icon v-else class="me-2" size="small" @click="">mdi-debug-step-over</v-icon>
         </template>
         </v-data-table>
+
+        <v-btn v-if="selectedMeals.length > 0" prepend-icon="mdi-check-circle" color="success" @click="updateSelectedMeals">
+          Mettre à jour les repas sélectionnés
+        </v-btn>
     </v-responsive>
   </v-container>
 </template>
@@ -110,6 +114,37 @@
           snackbarText.value = "Erreur lors de la récupération des repas !";
           snackbar.value = true;
         });
+  }
+
+  const etchebest = computed(() => {
+    if(!meals.value) return [];
+    if(meals.value.length < numberOfMeals.value && meals.value.length > 0) {
+      snackbarColor.value = "orange";
+      snackbarText.value = "Pas assez de plats pour le nombre souhaité (" + numberOfMeals.value + ")";
+      snackbar.value = true;
+      return meals.value;
+    }
+
+    const shuffled = meals.value.sort(() => 0.5 - Math.random());
+
+    return shuffled.slice(0, numberOfMeals.value);
+  });
+
+  async function updateSelectedMeals() {
+    console.log("update meals : ", selectedMeals.value);
+    await axios
+      .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value)
+      .then(response => {
+        snackbarColor.value = "green";
+        snackbarText.value = response.data + " repas enregistrés !";
+        snackbar.value = true;
+      })
+      .catch(err => {
+        console.error(err);
+        snackbarColor.value = "red";
+        snackbarText.value = "Erreur lors de la sauvegarde de la sélection !";
+        snackbar.value = true;
+      })
   }
 
   function mdiFoodIcon(type: number) {

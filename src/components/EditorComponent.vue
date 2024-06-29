@@ -145,14 +145,14 @@
 
   const notesRules = [
     (value: string) => {
-      if (value.length <= 2000) return true
+      if (!value || value.length <= 2000) return true
       return "Longueur maximale de la note (2000) dépassée"
     },
   ]
 
   const nameRules = [
     (value: string) => {
-      if (value.length <= 200) return true
+      if (!value || value.length <= 200) return true
       return "Longueur maximale de la note (200) dépassée"
     },
   ]
@@ -279,14 +279,14 @@
 
   async function save() {
     console.log()
-    if(!editedItem.value.name.length || editedItem.value.name.length > 200) {
+    if(!editedItem.value.name || (editedItem.value.name && editedItem.value.name.length > 200)) {
       snackbarColor.value = "orange";
       snackbarText.value = "Erreur : nom trop long !";
       snackbar.value = true;
       close();
       return;
     }
-    else if(editedItem.value.notes.length > 2000) {
+    else if(editedItem.value.notes && editedItem.value.notes.length > 2000) {
       snackbarColor.value = "orange";
       snackbarText.value = "Erreur : notes trop longues !";
       snackbar.value = true;
