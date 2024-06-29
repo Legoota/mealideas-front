@@ -55,7 +55,8 @@
                     <v-text-field
                       v-model="editedItem.name"
                       label="Nom"
-                      variant="solo-filled">
+                      variant="solo-filled"
+                      :rules="nameRules">
                     </v-text-field>
 
                     <v-date-input
@@ -79,6 +80,17 @@
                       item-value="id"
                       label="Type">
                     </v-select>
+
+                    <v-textarea
+                      label="Notes"
+                      v-model="editedItem.notes"
+                      name="input-7-1"
+                      variant="solo-filled"
+                      auto-grow
+                      clearable
+                      counter
+                      :rules="notesRules">
+                    </v-textarea>
                   </v-container>
                 </v-card-text>
 
@@ -130,6 +142,20 @@
     { title: 'Type', value: 'type', sortable: true },
     { title: 'Actions', key: 'actions', sortable: false },
   ];
+
+  const notesRules = [
+    (value: string) => {
+      if (value.length <= 2000) return true
+      return "Longueur maximale de la note (2000) dépassée"
+    },
+  ]
+
+  const nameRules = [
+    (value: string) => {
+      if (value.length <= 200) return true
+      return "Longueur maximale de la note (200) dépassée"
+    },
+  ]
 
   let snackbar: Ref<boolean> = ref(false);
   let snackbarText: Ref<string> = ref("");
@@ -252,6 +278,18 @@
   };
 
   async function save() {
+    if(!editedItem.value.name.length && editedItem.value.name.length > 200) {
+      snackbarColor.value = "orange";
+      snackbarText.value = "Erreur : nom trop long !";
+      snackbar.value = true;
+      return;
+    }
+    else if(editedItem.value.notes.length > 2000) {
+      snackbarColor.value = "orange";
+      snackbarText.value = "Erreur : notes trop longues !";
+      snackbar.value = true;
+      return;
+    }
     if (editedIndex.value > -1) {
       if(editedDate.value != null) {
         editedItem.value.date_lastuse = new Date(editedDate.value);
