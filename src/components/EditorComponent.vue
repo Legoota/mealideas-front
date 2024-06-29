@@ -186,7 +186,7 @@
 
   onMounted(async () => {
     await axios
-      .get('http://localhost:8080/api/types')
+      .get("http://localhost:8080/api/types")
       .then(response => {
         types.value = response.data
       })
@@ -194,7 +194,7 @@
           console.error(err);
         });
     await axios
-      .get('http://localhost:8080/api/meals')
+      .get("http://localhost:8080/api/meals")
       .then(response => {
         meals.value = response.data
       })
@@ -215,7 +215,7 @@
   });
 
   const formTitle = computed(() => {
-        return editedIndex.value === -1 ? 'Nouveau plat' : 'Modifier plat';
+        return editedIndex.value === -1 ? "Nouveau plat" : "Modifier plat";
   });
 
   function mdiFoodIcon(type: number) {

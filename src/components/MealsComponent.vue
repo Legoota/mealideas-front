@@ -1,6 +1,14 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="align-centerfill-height mx-auto" max-width="1000">
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="2500"
+        elevation="24"
+        :color="snackbarColor">
+        {{ snackbarText }}
+      </v-snackbar>
+
       <v-number-input
         label="Nombre de repas"
         :min="0"
@@ -30,11 +38,20 @@
 </template>
 
 <script setup lang="ts">
-  let numberOfMeals: Ref<number> = ref(0);
+  import { Meal } from '@/models/meal';
+  import axios from "axios";
+
+  const DEFAULT_MEAL_NUMBER = 14; // 1 week
+  const meals : Ref<Meal[]> = ref([]);
+
+  let numberOfMeals: Ref<number> = ref(DEFAULT_MEAL_NUMBER);
   let beforeDate: Ref<Date> = ref(new Date());
+  let snackbar: Ref<boolean> = ref(false);
+  let snackbarText: Ref<string> = ref("");
+  let snackbarColor: Ref<string> = ref("green");
 
   function reset() {
-    numberOfMeals.value = 0;
+    numberOfMeals.value = DEFAULT_MEAL_NUMBER;
     beforeDate.value = new Date();
   };
 
@@ -42,7 +59,18 @@
     console.log("cancel");
   }
 
-  function generate() {
-    console.log("generate with ", numberOfMeals.value, beforeDate.value);
+  async function generate() {
+    console.log("generate with", numberOfMeals.value, beforeDate.value);
+    await axios
+      .get("http://localhost:8080/api/meals/getAllBeforeForType/" + 1)
+      .then(response => {
+        meals.value = response.data
+      })
+      .catch(err => {
+          console.error(err);
+          snackbarColor.value = "red";
+          snackbarText.value = "Erreur lors de la récupération des repas !";
+          snackbar.value = true;
+        });
   }
 </script>
