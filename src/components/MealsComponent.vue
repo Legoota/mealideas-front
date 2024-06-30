@@ -34,7 +34,7 @@
         Réinitialiser valeurs
       </v-btn>
 
-      <v-data-table :items="etchebest" :headers="headers" :sort-by="[{ key: 'date_lastuse', order: 'desc' }]" v-model="selectedMeals" show-select>
+      <v-data-table :items="suggestedMeals" :headers="headers" v-model="selectedMeals" show-select return-object>
 
         <template v-slot:item.date_add="{ value }">
           {{ value ? useDate().format(value, "keyboardDate") : "-" }}
@@ -74,6 +74,7 @@
     { title: 'Utilisé le', value: 'date_lastuse', sortable: true },
     { title: 'Utilisations', value: 'counter', sortable: true },
     { title: 'Type', value: 'type', sortable: true },
+    { title: 'Notes', key: 'notes', sortable: false },
     { title: 'Statut', key: 'status', sortable: false },
   ];
 
@@ -83,19 +84,22 @@
   let snackbarText: Ref<string> = ref("");
   let snackbarColor: Ref<string> = ref("green");
   
-  let selectedMeals: Ref<number[]> = ref([]);
+  let suggestedMeals: Ref<Meal[]> = ref([]);
+  let selectedMeals: Ref<Meal[]> = ref([]);
 
   function reset() {
     numberOfMeals.value = DEFAULT_MEAL_NUMBER;
     beforeDate.value = new Date();
+    selectedMeals.value = [];
   };
 
   function cancel() {
     meals.value = [];
+    selectedMeals.value = [];
   }
 
   function isLocked(id: number) {
-    return selectedMeals.value.includes(id);
+    return selectedMeals.value.map(m => m.id).includes(id);
   }
 
   async function generate() {
@@ -107,6 +111,7 @@
         snackbarColor.value = "green";
         snackbarText.value = meals.value.length + " repas possibles récupérés";
         snackbar.value = true;
+        etchebest(numberOfMeals.value);
       })
       .catch(err => {
           console.error(err);
@@ -116,24 +121,24 @@
         });
   }
 
-  const etchebest = computed(() => {
-    if(!meals.value) return [];
-    if(meals.value.length < numberOfMeals.value && meals.value.length > 0) {
-      snackbarColor.value = "orange";
-      snackbarText.value = "Pas assez de plats pour le nombre souhaité (" + numberOfMeals.value + ")";
-      snackbar.value = true;
-      return meals.value;
+  function etchebest(mealNumber: number) {
+    suggestedMeals.value = [];
+    if(selectedMeals.value.length > 0) {
+      suggestedMeals.value = suggestedMeals.value.concat(selectedMeals.value);
     }
+    let suggestions = meals.value.filter(m => !selectedMeals.value.map(s => s.id).includes(m.id)).sort(() => 0.5 - Math.random());
 
-    const shuffled = meals.value.sort(() => 0.5 - Math.random());
+    let numberToAdd = mealNumber - suggestedMeals.value.length;
 
-    return shuffled.slice(0, numberOfMeals.value);
-  });
+    suggestions = suggestions.slice(0, numberToAdd);
+
+    suggestedMeals.value = suggestedMeals.value.concat(suggestions);
+  }
 
   async function updateSelectedMeals() {
     console.log("update meals : ", selectedMeals.value);
     await axios
-      .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value)
+      .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value.map(m => m.id))
       .then(response => {
         snackbarColor.value = "green";
         snackbarText.value = response.data + " repas enregistrés !";

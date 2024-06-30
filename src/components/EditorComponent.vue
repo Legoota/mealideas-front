@@ -140,6 +140,7 @@
     { title: 'Utilisé le', value: 'date_lastuse', sortable: true },
     { title: 'Utilisations', value: 'counter', sortable: true },
     { title: 'Type', value: 'type', sortable: true },
+    { title: 'Notes', value: 'notes', sortable: false },
     { title: 'Actions', key: 'actions', sortable: false },
   ];
 
