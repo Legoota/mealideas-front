@@ -22,6 +22,14 @@
         prepend-icon="">
       </v-date-input>
 
+      <v-select 
+        v-model="typeOfMeals"
+        :items="types"
+        item-title="name"
+        item-value="id"
+        label="Type">
+      </v-select>
+
       <div class="meal-buttons">
         <v-row align="center" justify="center">
           <v-col cols="auto">
@@ -84,11 +92,13 @@
 
 <script setup lang="ts">
   import { Meal } from '@/models/meal';
+  import { Type } from '@/models/type';
   import { useDate } from 'vuetify';
   import axios from "axios";
 
   const DEFAULT_MEAL_NUMBER = 14; // 1 week
-  const meals : Ref<Meal[]> = ref([]);
+  const meals: Ref<Meal[]> = ref([]);
+  const types: Ref<Type[]> = ref([]);
 
   const suggestionHeaders = [
     { title: 'Nom', value: 'name', sortable: true },
@@ -106,6 +116,7 @@
 
   let numberOfMeals: Ref<number> = ref(DEFAULT_MEAL_NUMBER);
   let beforeDate: Ref<Date> = ref(new Date());
+  let typeOfMeals: Ref<number> = ref(1);
   let snackbar: Ref<boolean> = ref(false);
   let snackbarText: Ref<string> = ref("");
   let snackbarColor: Ref<string> = ref("green");
@@ -113,6 +124,18 @@
   let suggestedMeals: Ref<Meal[]> = ref([]);
   let selectedMeals: Ref<Meal[]> = ref([]);
   let finalMeals: Ref<Meal[]> = ref([]);
+
+  onMounted(async () => {
+    await axios
+      .get("http://localhost:8080/api/types")
+      .then(response => {
+        types.value = response.data
+      })
+      .catch(err => {
+          console.error(err);
+        });
+  });
+
 
   function cancel() {
     selectedMeals.value = [];
@@ -123,9 +146,8 @@
   }
 
   async function generate() {
-    console.log("generate with", numberOfMeals.value, beforeDate.value);
     await axios
-      .get("http://localhost:8080/api/meals/getAllBeforeForType/" + 1, { params : { date: beforeDate.value }})
+      .get("http://localhost:8080/api/meals/getAllBeforeForType/" + typeOfMeals.value, { params : { date: beforeDate.value }})
       .then(response => {
         meals.value = response.data;
         snackbarColor.value = "green";
@@ -156,7 +178,6 @@
   }
 
   async function updateSelectedMeals() {
-    console.log("update meals : ", selectedMeals.value);
     await axios
       .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value.map(m => m.id))
       .then(response => {

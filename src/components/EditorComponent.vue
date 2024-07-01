@@ -131,8 +131,8 @@
   import { ref, nextTick, watch, computed } from "vue";
   import axios from "axios";
 
-  const meals : Ref<Meal[]> = ref([]);
-  const types : Ref<Type[]> = ref([]);
+  const meals: Ref<Meal[]> = ref([]);
+  const types: Ref<Type[]> = ref([]);
  
   const headers = [
     { title: 'Nom', value: 'name', sortable: true },
@@ -279,7 +279,6 @@
   };
 
   async function save() {
-    console.log()
     if(!editedItem.value.name || (editedItem.value.name && editedItem.value.name.length > 200)) {
       snackbarColor.value = "orange";
       snackbarText.value = "Erreur : nom trop long !";

@@ -16,7 +16,7 @@ import { Meal } from '@/models/meal';
 import axios from "axios";
 
   const value: Ref<Date[]> = ref([new Date()]);
-  const meals : Ref<Meal[]> = ref([]);
+  const meals: Ref<Meal[]> = ref([]);
 
   onMounted(async () => {
   await axios
