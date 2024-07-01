@@ -22,20 +22,23 @@
         prepend-icon="">
       </v-date-input>
 
-      <v-btn prepend-icon="mdi-check-circle" color="success" @click="generate">
-        Générer
-      </v-btn>
+      <div class="meal-buttons">
+        <v-row align="center" justify="center">
+          <v-col cols="auto">
+            <v-btn :disabled="selectedMeals.length >= numberOfMeals" prepend-icon="mdi-check-circle" color="success" @click="generate">
+              {{suggestedMeals.length < 1 ? "Générer" : "Reroll"}}
+            </v-btn>
+          </v-col>
 
-      <v-btn prepend-icon="mdi-delete-circle" color="error" @click="cancel">
-        Annuler
-      </v-btn>
+          <v-col cols="auto">
+            <v-btn prepend-icon="mdi-delete-circle" color="error" @click="cancel">
+              Annuler
+            </v-btn>
+          </v-col>
+        </v-row>
+      </div>
 
-      <v-btn prepend-icon="mdi-cancel" color="warning" @click="reset">
-        Réinitialiser valeurs
-      </v-btn>
-
-      <v-data-table :items="suggestedMeals" :headers="headers" v-model="selectedMeals" show-select return-object>
-
+      <v-data-table :items="suggestedMeals" :headers="suggestionHeaders" v-model="selectedMeals" show-select return-object :items-per-page="-1">
         <template v-slot:item.date_add="{ value }">
           {{ value ? useDate().format(value, "keyboardDate") : "-" }}
         </template>
@@ -52,11 +55,29 @@
           <v-icon v-if="isLocked(item.id)" class="me-2" size="small" @click="">mdi-lock</v-icon>
           <v-icon v-else class="me-2" size="small" @click="">mdi-debug-step-over</v-icon>
         </template>
-        </v-data-table>
+      </v-data-table>
 
-        <v-btn v-if="selectedMeals.length > 0" prepend-icon="mdi-check-circle" color="success" @click="updateSelectedMeals">
+      <div class="update-meals">
+        <v-btn :disabled="selectedMeals.length < numberOfMeals" prepend-icon="mdi-check-circle" color="success" @click="updateSelectedMeals">
           Mettre à jour les repas sélectionnés
         </v-btn>
+      </div>
+
+
+        <div v-if="finalMeals.length > 0">
+
+          <br />
+          <v-divider></v-divider>
+          <br />
+
+          <span class="text-h3">Repas sélectionnés :</span>
+
+          <v-data-table :items="finalMeals" :headers="finalHeaders" :items-per-page="-1">
+            <template v-slot:item.type="{ value }">
+              <v-icon>{{ mdiFoodIcon(value) }}</v-icon>
+            </template>
+            </v-data-table>
+        </div>
     </v-responsive>
   </v-container>
 </template>
@@ -69,13 +90,18 @@
   const DEFAULT_MEAL_NUMBER = 14; // 1 week
   const meals : Ref<Meal[]> = ref([]);
 
-  const headers = [
+  const suggestionHeaders = [
     { title: 'Nom', value: 'name', sortable: true },
     { title: 'Utilisé le', value: 'date_lastuse', sortable: true },
     { title: 'Utilisations', value: 'counter', sortable: true },
     { title: 'Type', value: 'type', sortable: true },
     { title: 'Notes', key: 'notes', sortable: false },
     { title: 'Statut', key: 'status', sortable: false },
+  ];
+  const finalHeaders = [
+    { title: 'Nom', value: 'name', sortable: true },
+    { title: 'Type', value: 'type', sortable: true },
+    { title: 'Notes', key: 'notes', sortable: false },
   ];
 
   let numberOfMeals: Ref<number> = ref(DEFAULT_MEAL_NUMBER);
@@ -86,15 +112,9 @@
   
   let suggestedMeals: Ref<Meal[]> = ref([]);
   let selectedMeals: Ref<Meal[]> = ref([]);
-
-  function reset() {
-    numberOfMeals.value = DEFAULT_MEAL_NUMBER;
-    beforeDate.value = new Date();
-    selectedMeals.value = [];
-  };
+  let finalMeals: Ref<Meal[]> = ref([]);
 
   function cancel() {
-    meals.value = [];
     selectedMeals.value = [];
   }
 
@@ -140,9 +160,12 @@
     await axios
       .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value.map(m => m.id))
       .then(response => {
+        finalMeals.value.push(...selectedMeals.value);
         snackbarColor.value = "green";
         snackbarText.value = response.data + " repas enregistrés !";
         snackbar.value = true;
+        selectedMeals.value = [];
+        suggestedMeals.value = [];
       })
       .catch(err => {
         console.error(err);
@@ -171,3 +194,15 @@
     return mdi;
   }
 </script>
+
+<style>
+  .meal-buttons {
+    margin-bottom: 1em;
+  }
+
+  .update-meals {
+    display: flex;
+    justify-content: center;
+    margin: 1em;
+  }
+</style>
