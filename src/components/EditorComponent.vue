@@ -189,7 +189,7 @@
     await axios
       .get("http://localhost:8080/api/types")
       .then(response => {
-        types.value = response.data
+        types.value = response.data;
       })
       .catch(err => {
           console.error(err);
@@ -197,7 +197,7 @@
     await axios
       .get("http://localhost:8080/api/meals")
       .then(response => {
-        meals.value = response.data
+        meals.value = response.data;
       })
       .catch(err => {
           console.error(err);

@@ -129,7 +129,7 @@
     await axios
       .get("http://localhost:8080/api/types")
       .then(response => {
-        types.value = response.data
+        types.value = response.data;
       })
       .catch(err => {
           console.error(err);

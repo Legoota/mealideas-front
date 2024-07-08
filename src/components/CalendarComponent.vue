@@ -22,7 +22,7 @@ import axios from "axios";
   await axios
     .get("http://localhost:8080/api/meals")
     .then(response => {
-      meals.value = response.data
+      meals.value = response.data;
     })
     .catch(err => {
         console.error(err);
