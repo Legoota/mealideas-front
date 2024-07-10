@@ -4,38 +4,6 @@
       class="align-centerfill-height mx-auto"
       max-width="1000">
 
-      <v-card
-        class="mt-8 mx-auto overflow-visible"
-        max-width="400"
-      >
-        <v-sheet
-          class="v-sheet--offset mx-auto"
-          color="cyan"
-          elevation="12"
-          max-width="calc(100% - 32px)"
-          rounded="lg"
-        >
-          <v-sparkline
-            :labels="mealsByMonthLabels"
-            :model-value="mealsByMonth"
-            color="white"
-            line-width="2"
-            padding="8"
-            stroke-linecap="round"
-            smooth
-          ></v-sparkline>
-        </v-sheet>
-
-        <v-card-text class="pt-0">
-          <div class="text-h6 font-weight-light mb-2">
-            Nouveaux repas
-          </div>
-          <div class="subheading font-weight-light text-grey">
-            Nombre de nouveaux repas cette année
-          </div>
-        </v-card-text>
-      </v-card>
-
         <v-img class="mb-4" height="150" src="@/assets/logo.png" />
 
         <v-row>
@@ -78,6 +46,85 @@
                 </router-link>
             </v-col>
         </v-row>
+
+        <br />
+
+        <v-divider>Stats</v-divider>
+
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-card
+              class="mt-8 mx-auto overflow-visible"
+              max-width="400">
+              <v-card-title>
+                Nouveaux repas
+              </v-card-title>
+
+              <v-card-subtitle>
+                Nombre de repas ajoutés cette année
+              </v-card-subtitle>
+              
+              <v-card-text>
+                <v-sheet
+                  class="v-sheet--offset mx-auto"
+                  color="grey-darken-3"
+                  elevation="12"
+                  max-width="100%"
+                  rounded>
+                  <v-sparkline
+                    :labels="mealsByMonthLabels"
+                    :model-value="mealsByMonth"
+                    color="white"
+                    line-width="2"
+                    padding="10"
+                    stroke-linecap="round"
+                    smooth>
+                  </v-sparkline>
+                </v-sheet>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-card
+              class=" mt-8 mx-auto"
+              max-width="400">
+              <v-card-item>
+                <v-card-title>
+                  Nombre de repas
+                </v-card-title>
+
+                <v-card-subtitle>
+                  Nombre de repas enregistrés
+                </v-card-subtitle>
+              </v-card-item>
+
+              <v-card-text>
+                <span class="text-h1">{{ meals.length }}</span>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-card
+              class=" mt-8 mx-auto"
+              max-width="400">
+              <v-card-item>
+                <v-card-title>
+                  Favoris
+                </v-card-title>
+
+                <v-card-subtitle>
+                  Repas les plus utilisés
+                </v-card-subtitle>
+              </v-card-item>
+
+              <v-card-text>
+                <v-data-table :items="top3meals" :headers="headers" :sort-by="[{ key: 'counter', order: 'desc' }]" hide-default-footer hide-default-header density="compact"></v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
     </v-responsive>
   </v-container>
 </template>
@@ -88,8 +135,12 @@
 
   const meals: Ref<Meal[]> = ref([]);
   const mealsByMonth: Ref<number[]> = ref([]);
-  const mealsByMonthLabels = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'
-      ];
+  const mealsByMonthLabels = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ];
+
+  const headers = [
+    { title: 'Nom', value: 'name', sortable: true },
+    { title: 'Utilisations', value: 'counter', sortable: true },
+  ];
 
   onMounted(async () => {
     await axios
@@ -102,6 +153,10 @@
       .catch(err => {
           console.error(err);
         });
+  });
+
+  const top3meals = computed(() => {
+        return meals.value.sort((a,b) => b.counter - a.counter).slice(0,3);
   });
 
   function fillMealsByMonth() {
