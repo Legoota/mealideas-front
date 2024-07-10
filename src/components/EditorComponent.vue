@@ -41,7 +41,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
-                <v-btn class="mb-2" color="primary" dark v-bind="props">
+                <v-btn class="mb-2" color="primary-darken-1" dark v-bind="props">
                   Nouveau plat
                 </v-btn>
               </template>
@@ -201,7 +201,7 @@
       })
       .catch(err => {
           console.error(err);
-          snackbarColor.value = "red";
+          snackbarColor.value = "#FF5449";
           snackbarText.value = "Erreur lors de la récupération des repas !";
           snackbar.value = true;
         });
@@ -248,13 +248,13 @@
     meals.value.splice(editedIndex.value, 1);
     await axios.delete("http://localhost:8080/api/meals/" + editedItem.value.id)
       .then(() => {
-        snackbarColor.value = "green";
+        snackbarColor.value = "#83D5C6";
         snackbarText.value = "Repas supprimé !";
         snackbar.value = true;
       })
       .catch(err => {
         console.error(err);
-        snackbarColor.value = "red";
+        snackbarColor.value = "#FF5449";
         snackbarText.value = "Erreur lors de la suppression du repas !";
         snackbar.value = true;
       })
@@ -280,14 +280,14 @@
 
   async function save() {
     if(!editedItem.value.name || (editedItem.value.name && editedItem.value.name.length > 200)) {
-      snackbarColor.value = "orange";
+      snackbarColor.value = "#FF9200";
       snackbarText.value = "Erreur : nom trop long !";
       snackbar.value = true;
       close();
       return;
     }
     else if(editedItem.value.notes && editedItem.value.notes.length > 2000) {
-      snackbarColor.value = "orange";
+      snackbarColor.value = "#FF9200";
       snackbarText.value = "Erreur : notes trop longues !";
       snackbar.value = true;
       close();
@@ -300,13 +300,13 @@
       Object.assign(meals.value[editedIndex.value], editedItem.value);
       await axios.put("http://localhost:8080/api/meals/" + editedItem.value.id, editedItem.value)
         .then(() => {
-          snackbarColor.value = "green";
+          snackbarColor.value = "#83D5C6";
           snackbarText.value = "Repas modifié !";
           snackbar.value = true;
         })
         .catch(err => {
           console.error(err);
-          snackbarColor.value = "red";
+          snackbarColor.value = "#FF5449";
           snackbarText.value = "Erreur lors de la modification du repas !";
           snackbar.value = true;
         });
@@ -315,13 +315,13 @@
       meals.value.push(editedItem.value);
       await axios.post("http://localhost:8080/api/meals", editedItem.value)
         .then(() => {
-          snackbarColor.value = "green";
+          snackbarColor.value = "#83D5C6";
           snackbarText.value = "Repas ajouté !";
           snackbar.value = true;
         })
         .catch(err => {
           console.error(err);
-          snackbarColor.value = "red";
+          snackbarColor.value = "#FF5449";
           snackbarText.value = "Erreur lors de l'ajout du repas !";
           snackbar.value = true;
         });

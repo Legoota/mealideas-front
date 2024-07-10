@@ -150,14 +150,14 @@
       .get("http://localhost:8080/api/meals/getAllBeforeForType/" + typeOfMeals.value, { params : { date: beforeDate.value }})
       .then(response => {
         meals.value = response.data;
-        snackbarColor.value = "green";
+        snackbarColor.value = "#83D5C6";
         snackbarText.value = meals.value.length + " repas possibles récupérés";
         snackbar.value = true;
         etchebest(numberOfMeals.value);
       })
       .catch(err => {
           console.error(err);
-          snackbarColor.value = "red";
+          snackbarColor.value = "#FF5449";
           snackbarText.value = "Erreur lors de la récupération des repas !";
           snackbar.value = true;
         });
@@ -182,7 +182,7 @@
       .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value.map(m => m.id))
       .then(response => {
         finalMeals.value.push(...selectedMeals.value);
-        snackbarColor.value = "green";
+        snackbarColor.value = "#83D5C6";
         snackbarText.value = response.data + " repas enregistrés !";
         snackbar.value = true;
         selectedMeals.value = [];
@@ -190,7 +190,7 @@
       })
       .catch(err => {
         console.error(err);
-        snackbarColor.value = "red";
+        snackbarColor.value = "#FF5449";
         snackbarText.value = "Erreur lors de la sauvegarde de la sélection !";
         snackbar.value = true;
       })

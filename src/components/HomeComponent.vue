@@ -67,7 +67,7 @@
               <v-card-text>
                 <v-sheet
                   class="v-sheet--offset mx-auto"
-                  color="grey-darken-3"
+                  color="#2C4A60"
                   elevation="12"
                   max-width="100%"
                   rounded>
