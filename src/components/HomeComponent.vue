@@ -72,8 +72,8 @@
                   max-width="100%"
                   rounded>
                   <v-sparkline
-                    :labels="mealsByMonthLabels"
                     :model-value="mealsByMonth"
+                    multiple
                     color="white"
                     line-width="2"
                     padding="10"
@@ -135,7 +135,6 @@
 
   const meals: Ref<Meal[]> = ref([]);
   const mealsByMonth: Ref<number[]> = ref([]);
-  const mealsByMonthLabels = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ];
 
   const headers = [
     { title: 'Nom', value: 'name', sortable: true },
@@ -144,7 +143,7 @@
 
   onMounted(async () => {
     await axios
-      .get("http://localhost:8080/api/meals")
+      .get("http://192.168.1.224:8081/api/meals")
       .then(response => {
         meals.value = response.data;
         fillMealsByMonth();

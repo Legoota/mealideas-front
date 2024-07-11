@@ -187,7 +187,7 @@
 
   onMounted(async () => {
     await axios
-      .get("http://localhost:8080/api/types")
+      .get("http://192.168.1.224:8081/api/types")
       .then(response => {
         types.value = response.data;
       })
@@ -195,7 +195,7 @@
           console.error(err);
         });
     await axios
-      .get("http://localhost:8080/api/meals")
+      .get("http://192.168.1.224:8081/api/meals")
       .then(response => {
         meals.value = response.data;
       })
@@ -246,7 +246,7 @@
 
   async function deleteItemConfirm() {
     meals.value.splice(editedIndex.value, 1);
-    await axios.delete("http://localhost:8080/api/meals/" + editedItem.value.id)
+    await axios.delete("http://192.168.1.224:8081/api/meals/" + editedItem.value.id)
       .then(() => {
         snackbarColor.value = "#83D5C6";
         snackbarText.value = "Repas supprimé !";
@@ -298,7 +298,7 @@
         editedItem.value.date_lastuse = new Date(editedDate.value);
       }
       Object.assign(meals.value[editedIndex.value], editedItem.value);
-      await axios.put("http://localhost:8080/api/meals/" + editedItem.value.id, editedItem.value)
+      await axios.put("http://192.168.1.224:8081/api/meals/" + editedItem.value.id, editedItem.value)
         .then(() => {
           snackbarColor.value = "#83D5C6";
           snackbarText.value = "Repas modifié !";
@@ -313,7 +313,7 @@
     } else {
       editedItem.value.date_lastuse = null;
       meals.value.push(editedItem.value);
-      await axios.post("http://localhost:8080/api/meals", editedItem.value)
+      await axios.post("http://192.168.1.224:8081/api/meals", editedItem.value)
         .then(() => {
           snackbarColor.value = "#83D5C6";
           snackbarText.value = "Repas ajouté !";

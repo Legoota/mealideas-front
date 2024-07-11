@@ -127,7 +127,7 @@
 
   onMounted(async () => {
     await axios
-      .get("http://localhost:8080/api/types")
+      .get("http://192.168.1.224:8081/api/types")
       .then(response => {
         types.value = response.data;
       })
@@ -147,7 +147,7 @@
 
   async function generate() {
     await axios
-      .get("http://localhost:8080/api/meals/getAllBeforeForType/" + typeOfMeals.value, { params : { date: beforeDate.value }})
+      .get("http://192.168.1.224:8081/api/meals/getAllBeforeForType/" + typeOfMeals.value, { params : { date: beforeDate.value }})
       .then(response => {
         meals.value = response.data;
         snackbarColor.value = "#83D5C6";
@@ -179,7 +179,7 @@
 
   async function updateSelectedMeals() {
     await axios
-      .put("http://localhost:8080/api/meals/updateuse", selectedMeals.value.map(m => m.id))
+      .put("http://192.168.1.224:8081/api/meals/updateuse", selectedMeals.value.map(m => m.id))
       .then(response => {
         finalMeals.value.push(...selectedMeals.value);
         snackbarColor.value = "#83D5C6";

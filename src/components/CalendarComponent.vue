@@ -20,7 +20,7 @@ import axios from "axios";
 
   onMounted(async () => {
   await axios
-    .get("http://localhost:8080/api/meals")
+    .get("http://192.168.1.224:8081/api/meals")
     .then(response => {
       meals.value = response.data;
     })
